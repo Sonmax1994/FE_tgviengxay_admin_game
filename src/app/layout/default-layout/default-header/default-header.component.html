@@ -1,0 +1,74 @@
+<!--<c-header class="mb-4 d-print-none" position="sticky">-->
+<ng-container>
+  <c-container [fluid]="true" class="border-bottom px-4">
+    <button
+      [cSidebarToggle]="sidebarId()"
+      cHeaderToggler
+      class="btn"
+      toggle="visible"
+      style="margin-inline-start: -14px;"
+      aria-label="Toggle sidebar navigation"
+    >
+      <svg cIcon name="cilMenu" size="lg"></svg>
+    </button>
+    <c-header-nav class="mx-0">
+      <ng-container *ngTemplateOutlet="userDropdown" />
+    </c-header-nav>
+
+  </c-container>
+</ng-container>
+<!--</c-header>-->
+
+<ng-template #userDropdown>
+  <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
+    <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
+      <c-avatar
+        shape="rounded-1"
+        size="md"
+        src="./assets/images/avatars/8.jpg"
+        status="success"
+        textColor="primary"
+        alt="User avatar"
+      />
+    </button>
+    <ul cDropdownMenu class="px-2 py-3 w-auto">
+      <li>
+        <a cDropdownItem routerLink="" [cModalToggle]="changepass.id">
+          <svg cIcon class="me-2" name="cilSettings"></svg>
+          Đổi Mật Khẩu
+        </a>
+      </li>
+      <li>
+        <a cDropdownItem routerLink=""
+          (click)="
+            $event.preventDefault();
+            logout()">
+          <svg cIcon class="me-2" name="cilAccountLogout"></svg>
+          Đăng Xuất
+        </a>
+      </li>
+    </ul>
+  </c-dropdown>
+</ng-template>
+
+<c-modal #changepass backdrop="static" id="changepass">
+  <c-modal-header>
+    <h5 cModalTitle class="w-100 text-center">Đổi Mật Khẩu</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <div class="mb-3">
+      <div class="d-block mb-1 font-weigth-500">Mật khẩu mới:</div>
+      <input name="password" type="password" placeholder="Mật khẩu mới" class="input-el">
+    </div>
+    <div>
+      <div class="d-block mb-1 font-weigth-500">Xác nhận mật khẩu:</div>
+      <input name="re-password" type="password" placeholder="Xác nhận mật khẩu" class="input-el">
+    </div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="changepass.id" cButton color="secondary">
+      Hủy
+    </button>
+    <button cButton color="primary">Lưu</button>
+  </c-modal-footer>
+</c-modal>

@@ -1,0 +1,39 @@
+// Here you can add other styles
+
+// custom tweaks for scrollbar styling (wip)
+@use "scrollbar";
+
+ // custom calendar today cell color
+.calendar-cell.today {
+  --cui-calendar-cell-today-color: var(--cui-info) !important;
+}
+
+// custom select week cursor pointer
+.select-week .calendar-row.current {
+  cursor: pointer;
+}
+.modal-backdrop {
+  display: none;
+}
+.modal {
+  background: #5b5b5b6b;
+}
+.font-weigth-500 {
+  font-weight: 500;
+}
+.input-el {
+  width: 100%;
+  min-height: 40px;
+  padding: 3px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  &:focus {
+    outline: 1px solid #00daff;
+  }
+}
+.align-item-center {
+  align-items: center;
+}
+.justify-content-evenly {
+  justify-content: space-evenly;
+}
