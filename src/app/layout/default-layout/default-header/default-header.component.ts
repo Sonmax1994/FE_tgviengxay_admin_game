@@ -1,10 +1,9 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import {
   AvatarComponent,
-  ColorModeService,
   ContainerComponent,
   DropdownComponent,
   DropdownItemDirective,
@@ -23,7 +22,8 @@ import {
 } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
 import { IconDirective } from '@coreui/icons-angular';
-
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../../core/services/auth.service';
 @Component({
   selector: 'app-default-header',
   templateUrl: './default-header.component.html',
@@ -39,29 +39,54 @@ import { IconDirective } from '@coreui/icons-angular';
   ]
 })
 export class DefaultHeaderComponent extends HeaderComponent {
-
-  readonly #colorModeService = inject(ColorModeService);
-  readonly colorMode = this.#colorModeService.colorMode;
-
-  readonly colorModes = [
-    { name: 'light', text: 'Light', icon: 'cilSun' },
-    { name: 'dark', text: 'Dark', icon: 'cilMoon' },
-    { name: 'auto', text: 'Auto', icon: 'cilContrast' }
-  ];
-
-  readonly icons = computed(() => {
-    const currentMode = this.colorMode();
-    return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
-  });
-
-  constructor() {
+  pwObject = {
+    currentPassword: '',
+    newPassword: '',
+    newPassword_confirmation: ''
+  };
+  isModalVisible = false;
+  constructor(
+    private _authService: AuthService,
+    private _toastr: ToastrService
+  ) {
     super();
   }
 
   sidebarId = input('sidebar1');
 
-  logout(): void {
-    alert('Chức năng đang được phát triển!');
+  submitChangePW(): void {
+    if(this.validate()) {
+      this.changePassword();
+    }
+  }
+  validate() {
+    if(!this.pwObject.currentPassword || this.pwObject.currentPassword == '') {
+      this._toastr.error('Vui lòng nhập mật khẩu hiện tại');
+      return false;
+    }
+    if(!this.pwObject.newPassword || this.pwObject.newPassword == '') {
+      this._toastr.error('Vui lòng nhập mật khẩu mới');
+      return false;
+    }
+    if(!this.pwObject.newPassword_confirmation || this.pwObject.newPassword_confirmation == '') {
+      this._toastr.error('Vui lòng xác nhập lại mật khẩu mới');
+      return false;
+    }
+    if(this.pwObject.newPassword_confirmation && this.pwObject.newPassword && this.pwObject.newPassword_confirmation != this.pwObject.newPassword) {
+      this._toastr.error('Mật khẩu xác nhận không khớp');
+      return false;
+    }
+    return true;
   }
 
+  changePassword() {
+    this._authService.changePassword(this.pwObject).subscribe(res => {
+      this._toastr.success('Đổi mật khẩu thành công!');
+      this.isModalVisible = false;
+      console.log(res);
+    })
+  }
+  logout() {
+    this._authService.logout();
+  }
 }

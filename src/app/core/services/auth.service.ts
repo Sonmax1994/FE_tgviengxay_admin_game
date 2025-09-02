@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   login(params: any): Observable<any> {
-    return this.dataService.post("/w/login", params).pipe(
+    return this.dataService.post("/admin/game/login", params).pipe(
       tap((res) => {
         this._setLoginLocalStogare(res);
       }),
@@ -40,8 +40,13 @@ export class AuthService {
   }
 
   _setLoginLocalStogare(apiRes: any): void {
-    localStorage.setItem("token", JSON.stringify(apiRes?.token));
-    this._tokenSubject.next(apiRes?.token);
+    localStorage.setItem("token", JSON.stringify(apiRes?.accessToken));
+    this._tokenSubject.next(apiRes?.tokaccessTokenen);
+  }
+  changePassword(params: any): Observable<any> {
+    return this.dataService.post("/admin/game/change-password", params).pipe(
+      tap((res) => {}),
+    );
   }
 }
 

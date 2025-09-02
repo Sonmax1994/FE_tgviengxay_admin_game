@@ -25,7 +25,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
   user = {
-    userName: '',
+    username: '',
     password: ''
   }
 
@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
   }
 
   validateBeforLogin() {
-    if(!this.user.userName || this.user.userName == '') {
+    if(!this.user.username || this.user.username == '') {
       this._toastr.error('Vui lòng nhập tên đăng nhập');
       return false;
     }
