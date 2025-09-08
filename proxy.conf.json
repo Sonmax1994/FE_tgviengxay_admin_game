@@ -1,0 +1,9 @@
+[
+  {
+    "context": ["/api/**"],
+    "target": "https://api.tgviengxay.bet/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel" : "debug"
+  }
+]

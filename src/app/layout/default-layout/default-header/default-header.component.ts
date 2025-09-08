@@ -54,6 +54,14 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
   sidebarId = input('sidebar1');
 
+  initChangePW() {
+    this.pwObject = {
+      currentPassword: '',
+      newPassword: '',
+      newPassword_confirmation: ''
+    };
+    this.isModalVisible = true
+  }
   submitChangePW(): void {
     if(this.validate()) {
       this.changePassword();
@@ -81,9 +89,9 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
   changePassword() {
     this._authService.changePassword(this.pwObject).subscribe(res => {
-      this._toastr.success('Đổi mật khẩu thành công!');
+      this._toastr.success('Đổi mật khẩu thành công. Vui lòng đăng nhập lại');
       this.isModalVisible = false;
-      console.log(res);
+      this._authService.logout();
     })
   }
   logout() {

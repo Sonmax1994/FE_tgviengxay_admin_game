@@ -8,7 +8,6 @@ import {
   SidebarComponent,
   SidebarHeaderComponent,
   SidebarNavComponent,
-  SidebarToggleDirective,
 } from '@coreui/angular';
 
 import { DefaultHeaderComponent } from './';

@@ -9,7 +9,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     loadComponent: () => import('./layout').then(m => m.DefaultLayoutComponent),
     data: {
       title: 'Game'
@@ -27,7 +27,7 @@ export const routes: Routes = [
     data: {
       title: 'Login Page'
     },
-    // canActivate: [LoginGuard],
+    canActivate: [LoginGuard],
   },
   { path: '**', redirectTo: 'Game' }
 ];

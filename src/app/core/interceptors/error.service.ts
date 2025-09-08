@@ -18,15 +18,14 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(request)
       .pipe(catchError((err) => {
         if (err.status === 401) {
+          this.toastrService.error("Lỗi xác thực. Vui lòng đăng nhập lại");
           this.authService.logout();
           location.reload();
         }
         if (err.status === 404) {
           this.toastrService.error("Không tìm thấy nội dung yêu cầu");
         }
-        else if (err && err.error) {
-          console.log("err", err);
-          
+        else if (err && err.error) {          
           const errorMessage = err.error.message || 'Lỗi không xác định';
           this.toastrService.error(errorMessage);
         }

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { DataService } from './http-service.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 
@@ -10,7 +12,11 @@ export class AuthService {
   private _tokenSubject: BehaviorSubject<any> = new BehaviorSubject(null);
   private _currentUserSubject: BehaviorSubject<any> = new BehaviorSubject(null);
 
-  constructor(private dataService: DataService) {
+  constructor(
+    private dataService: DataService,
+    private router: Router,
+    private _toastr: ToastrService
+  ) {
     if (localStorage.getItem("token")) {
       const token = localStorage.getItem("token");
       this._tokenSubject.next(token);
@@ -26,9 +32,13 @@ export class AuthService {
   }
 
   login(params: any): Observable<any> {
-    return this.dataService.post("/admin/game/login", params).pipe(
-      tap((res) => {
-        this._setLoginLocalStogare(res);
+    return this.dataService.post("/api/v1/admin/game/login", params).pipe(
+      tap((res: any) => {
+        if(res?.data?.accessToken) {
+          this._setLoginLocalStogare(res.data.accessToken);
+        } else {
+          this._toastr.error('Lỗi đăng nhập. Vui lòng thử lại');
+        }
       }),
     );
   }
@@ -37,14 +47,15 @@ export class AuthService {
     localStorage.removeItem("token");
     this._tokenSubject.next(null);
     this._currentUserSubject.next(null);
+    this.router.navigate(["login"]);
   }
 
-  _setLoginLocalStogare(apiRes: any): void {
-    localStorage.setItem("token", JSON.stringify(apiRes?.accessToken));
-    this._tokenSubject.next(apiRes?.tokaccessTokenen);
+  _setLoginLocalStogare(accessToken: string): void {
+    localStorage.setItem("token", JSON.stringify(accessToken));
+    this._tokenSubject.next(accessToken);
   }
   changePassword(params: any): Observable<any> {
-    return this.dataService.post("/admin/game/change-password", params).pipe(
+    return this.dataService.post("/api/v1/admin/game/change-password", params).pipe(
       tap((res) => {}),
     );
   }

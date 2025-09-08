@@ -13,32 +13,32 @@ export class GameService {
   constructor(private dataService: DataService) {}
 
   listGame(): Observable<any> {
-    return this.dataService.get("/game/rooms", {}).pipe(
+    return this.dataService.get("/api/v1/game/rooms", {}).pipe(
       tap((res) => {}),
     );
   }
-  currentSession(roomId: number): Observable<any> {
-    return this.dataService.get(`/game/${roomId}/status`, {}).pipe(
+  listMatch(roomId: number): Observable<any> {
+    return this.dataService.get(`/api/v1/game/${roomId}/matches/list`, {}).pipe(
       tap((res) => {}),
     );
   }
   createSession(params: sesionObject): Observable<any> {
-    return this.dataService.get("/matches/bet/create", params).pipe(
+    return this.dataService.get("/api/v1/matches/bet/create", params).pipe(
       tap((res) => {}),
     );
   }
   lockSession(params: sesionObject): Observable<any> {
-    return this.dataService.get("/matches/bet/locked", params).pipe(
+    return this.dataService.get("/api/v1/matches/bet/locked", params).pipe(
       tap((res) => {}),
     );
   }
   gameResult(params: sesionObject): Observable<any> {
-    return this.dataService.get("/matches/bet/result", params).pipe(
+    return this.dataService.get("/api/v1/matches/bet/result", params).pipe(
       tap((res) => {}),
     );
   }
   finishSession(params: sesionObject): Observable<any> {
-    return this.dataService.get("/matches/bet/completed", params).pipe(
+    return this.dataService.get("/api/v1/matches/bet/completed", params).pipe(
       tap((res) => {}),
     );
   }

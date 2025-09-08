@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IApiService } from '../interfaces/api';
 import { IHttpClientOptions } from '../interfaces/http-client-options';
-
+declare let END_POINT_URL: any;
 @Injectable({
   providedIn: 'root'
 })
 export class DataService implements IApiService {
 
-  apiURL = "";
+  apiURL = END_POINT_URL;
 
   constructor(
     private httpClient: HttpClient
