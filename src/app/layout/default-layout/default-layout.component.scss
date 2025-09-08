@@ -36,8 +36,8 @@
   width: 100%;
   background: #676767c2;
   position: absolute;
-  top: -1.5rem;
-  z-index: 2;
+  top: calc(-1.5rem - 66px);
+  z-index: 9999;
   bottom: 0;
   .spinner-border {
     position: absolute;
