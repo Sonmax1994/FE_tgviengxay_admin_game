@@ -27,7 +27,10 @@
     sidebarId="sidebar1"
   />
   <!--app-body-->
-  <div class="body flex-grow-1">
+  <div class="body flex-grow-1 position-relative">
+    <div class="loading-screen" *ngIf="loaderService.isLoading | async">
+      <c-spinner color="warning" />
+    </div>
     <c-container fluid class="h-auto px-4">
       <router-outlet />
     </c-container>
