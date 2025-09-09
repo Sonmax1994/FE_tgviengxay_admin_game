@@ -22,23 +22,23 @@ export class GameService {
       tap((res) => {}),
     );
   }
-  createSession(params: sesionObject): Observable<any> {
-    return this.dataService.get("/api/v1/matches/bet/create", params).pipe(
+  createSession(params: any): Observable<any> {
+    return this.dataService.post("/api/v1/chicken/matches/bet/create", params).pipe(
       tap((res) => {}),
     );
   }
   lockSession(params: sesionObject): Observable<any> {
-    return this.dataService.get("/api/v1/matches/bet/locked", params).pipe(
+    return this.dataService.post("/api/v1/chicken/matches/bet/locked", params).pipe(
       tap((res) => {}),
     );
   }
   gameResult(params: sesionObject): Observable<any> {
-    return this.dataService.get("/api/v1/matches/bet/result", params).pipe(
+    return this.dataService.post("/api/v1/chicken/matches/bet/result", params).pipe(
       tap((res) => {}),
     );
   }
   finishSession(params: sesionObject): Observable<any> {
-    return this.dataService.get("/api/v1/matches/bet/completed", params).pipe(
+    return this.dataService.post("/api/v1/chicken/matches/bet/completed", params).pipe(
       tap((res) => {}),
     );
   }

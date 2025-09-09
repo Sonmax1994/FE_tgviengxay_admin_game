@@ -55,7 +55,7 @@ export class AuthService {
     this._tokenSubject.next(accessToken);
   }
   changePassword(params: any): Observable<any> {
-    return this.dataService.post("/api/v1/admin/game/change-password", params).pipe(
+    return this.dataService.post("/api/v1/admin/game/change/password", params).pipe(
       tap((res) => {}),
     );
   }

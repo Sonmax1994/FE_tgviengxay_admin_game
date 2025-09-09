@@ -24,8 +24,6 @@ export class SuccessInterceptor implements HttpInterceptor {
         //   const evtClone = evt.clone({ body: data });
         //   return evtClone;
         // }
-        console.log(evt);
-
         return evt;
       }),
     );
