@@ -59,8 +59,19 @@
     }
   }
 }
-#currentSession {
+#listMatchModal {
   th {
     background: #00daff;
+  }
+  .match-detail {
+    padding-top: 15px;
+    border-top: 2px dotted;
+  }
+  .detail-txt {
+    color: blue;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

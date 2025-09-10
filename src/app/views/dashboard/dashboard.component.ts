@@ -20,7 +20,8 @@ import { ToastrService } from 'ngx-toastr';
 import { GameService } from '../../core/services/game.service';
 import { CommonModule, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { cilInfo } from '@coreui/icons';
+import { IconDirective } from '@coreui/icons-angular';
 @Component({
   templateUrl: 'dashboard.component.html',
   styleUrls: ['dashboard.component.scss'],
@@ -42,10 +43,12 @@ import { FormsModule } from '@angular/forms';
     BreadcrumbComponent, BreadcrumbItemComponent,
     UpperCasePipe,
     CommonModule,
-    FormsModule
+    FormsModule,
+    IconDirective
 ]
 })
 export class DashboardComponent implements OnInit {
+  icons = { cilInfo };
   title: string = "";
   listGames: any[] = [];
   listMatch: any[] = [];
@@ -59,6 +62,7 @@ export class DashboardComponent implements OnInit {
   isModalVisibleFinishOrStop = false;
   isStopSession = false;
   isModalVisibleNewSession = false;
+  isModalVisibleListMatch = false;
   constructor(
     private _gameService: GameService,
     private _toastr: ToastrService
@@ -96,7 +100,7 @@ export class DashboardComponent implements OnInit {
       case 2:
         return "Đang diễn ra";
       case 3:
-        return "Đá khóa không nhận cược";
+        return "Đã khóa không nhận cược";
       default:
         return "Đã kết thúc phiên";
     }
@@ -197,6 +201,12 @@ export class DashboardComponent implements OnInit {
       this.onGetlistMatch();
     })
   }
+  selecteMatch: any;
   onShowModalListMatch(): void {
+    this.isModalVisibleListMatch = true;
+    this.selecteMatch = undefined;
+  }
+  onSelectMatch(match: any): void {
+    this.selecteMatch = match;
   }
 }

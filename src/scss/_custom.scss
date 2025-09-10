@@ -17,6 +17,11 @@
 }
 .modal {
   background: #5b5b5b6b;
+  &#listMatchModal {
+    .modal-dialog {
+      max-width: 700px;
+    }
+  }
 }
 .font-weigth-500 {
   font-weight: 500;
