@@ -98,15 +98,15 @@
     </p>
     <div class="d-flex justify-content-evenly">
       <c-form-check>
-        <input cFormCheckInput type="radio" value="0" name="chickenOpt" id="chickenhoa" [(ngModel)]="resultObj.winner" />
+        <input cFormCheckInput type="radio" value="draw" name="chickenOpt" id="chickenhoa" [(ngModel)]="resultObj.winner" />
         <label cFormCheckLabel for="chickenhoa">HÒA</label>
       </c-form-check>
       <c-form-check>
-        <input cFormCheckInput type="radio" value="1" name="chickenOpt" id="chickengreen" [(ngModel)]="resultObj.winner" />
+        <input cFormCheckInput type="radio" value="blue" name="chickenOpt" id="chickengreen" [(ngModel)]="resultObj.winner" />
         <label cFormCheckLabel for="chickengreen">GÀ XANH</label>
       </c-form-check>
       <c-form-check>
-        <input cFormCheckInput type="radio" value="2" name="chickenOpt" id="chickenred" [(ngModel)]="resultObj.winner" />
+        <input cFormCheckInput type="radio" value="red" name="chickenOpt" id="chickenred" [(ngModel)]="resultObj.winner" />
         <label cFormCheckLabel for="chickenred">GÀ ĐỎ</label>
       </c-form-check>
     </div>
@@ -189,7 +189,7 @@
       <p>
         THỜI GIAN KẾT THÚC: {{selecteMatch.endTime && selecteMatch.endTime * 1000 | date:'dd/MM/yyyy HH:mm'}}
       </p>
-      <P>KẾT QUẢ: </P>
+      <P>KẾT QUẢ: {{selecteMatch.result.winnerName}}</P>
       <p>THÔNG TIN GÀ:</p>
       <table bordered cTable>
         <thead>
