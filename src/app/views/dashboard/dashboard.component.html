@@ -168,8 +168,11 @@
             <td class="text-center">{{match.matchName}}</td>
             <td class="text-center">{{onRenderGameStt(match.status)}}</td>
             <td class="text-center">
-              <span class="detail-txt" (click)="onSelectMatch(match)">
-                <svg [cIcon]="icons.cilInfo" size="xl" title="Chi Tiết"></svg>
+              <span class="detail-txt" (click)="onSelectMatch(match)" title="Chi Tiết">
+                <svg [cIcon]="icons.cilList" size="xl" ></svg>
+              </span>
+              <span *ngIf="match.status == 3" class="detail-txt" title="Mở Lại Cược"(click)="onReopenMatch(match)">
+                <svg [cIcon]="icons.cilPencil" size="xl"></svg>
               </span>
             </td>
           </tr>
@@ -189,7 +192,42 @@
       <p>
         THỜI GIAN KẾT THÚC: {{selecteMatch.endTime && selecteMatch.endTime * 1000 | date:'dd/MM/yyyy HH:mm'}}
       </p>
-      <P>KẾT QUẢ: {{selecteMatch.result.winnerName}}</P>
+      <P>
+        KẾT QUẢ: {{selecteMatch.result.winnerName}}
+        <button cButton color="warning" style="margin-left: 20px;" 
+        (click)="
+          isUpdateResult = true; 
+          updateMatch = selecteMatch; 
+          resultObj.winner = selecteMatch.result.winner;
+        ">
+          Thay Đổi Kết Quả
+        </button>
+      </P>
+      <div class="update-result" *ngIf="isUpdateResult">
+        <p class="font-weigth-500">
+          CẬP NHẬT KẾT QUẢ: CHỌN GÀ CHIẾN THẮNG
+        </p>
+        <div class="d-flex justify-content-evenly">
+          <c-form-check>
+              <input cFormCheckInput type="radio" value="draw" name="chickenOpt" id="chickenhoa" [(ngModel)]="resultObj.winner" />
+            <label cFormCheckLabel for="chickenhoa">HÒA</label>
+          </c-form-check>
+          <c-form-check>
+              <input cFormCheckInput type="radio" value="blue" name="chickenOpt" id="chickengreen" [(ngModel)]="resultObj.winner" />
+            <label cFormCheckLabel for="chickengreen">GÀ XANH</label>
+          </c-form-check>
+          <c-form-check>
+              <input cFormCheckInput type="radio" value="red" name="chickenOpt" id="chickenred" [(ngModel)]="resultObj.winner" />
+            <label cFormCheckLabel for="chickenred">GÀ ĐỎ</label>
+          </c-form-check>
+        </div>
+        <div class="btn-update-result d-flex justify-content-end mt-3">
+          <button cButton color="secondary" (click)="isUpdateResult = false;">
+            HỦY
+          </button>
+          <button cButton color="primary" (click)="onChangeResult()">XÁC NHẬN</button>
+        </div>
+      </div>
       <p>THÔNG TIN GÀ:</p>
       <table bordered cTable>
         <thead>
@@ -211,5 +249,18 @@
     <button [cModalToggle]="listMatchModal.id" cButton color="secondary">
       ĐÓNG
     </button>
+  </c-modal-footer>
+</c-modal>
+<c-modal backdrop="static" [visible]="isModalReopenMatch">
+  <c-modal-body>
+    <h5 cModalTitle class="w-100 text-center mb-4">
+      BẠN ĐANG MỞ LẠI CƯỢC CHO TRẬN ĐẤU: {{reopenMatch?.matchName}}
+    </h5>
+  </c-modal-body>
+  <c-modal-footer>
+    <button (click)="isModalReopenMatch = false" cButton color="secondary">
+      HỦY
+    </button>
+    <button cButton color="primary" (click)="onConfirmReopen()">XÁC NHẬN</button>
   </c-modal-footer>
 </c-modal>

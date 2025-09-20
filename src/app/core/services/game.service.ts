@@ -42,5 +42,10 @@ export class GameService {
       tap((res) => {}),
     );
   }
+  reopenSession(params: sesionObject): Observable<any> {
+    return this.dataService.post("/api/v1/chicken/matches/bet/reopen", params).pipe(
+      tap((res) => {}),
+    );
+  }
 }
 

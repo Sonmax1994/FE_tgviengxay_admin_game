@@ -33,12 +33,14 @@
 //  --scrollbar-track-transition: height ease-out 150ms, width ease-out 150ms;
 //}
 .loading-screen {
-  width: 100%;
+  width: 100vw;
   background: #676767c2;
   position: absolute;
   top: calc(-1.5rem - 66px);
   z-index: 9999;
   bottom: 0;
+  left: auto;
+  right: 0;
   .spinner-border {
     position: absolute;
     top: 50%;

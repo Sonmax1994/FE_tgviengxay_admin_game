@@ -70,8 +70,20 @@
   .detail-txt {
     color: blue;
     cursor: pointer;
+    margin: 0 5px;
     &:hover {
       text-decoration: underline;
+    }
+  }
+}
+.update-result {
+  border: 1px dashed red;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 15px;
+  .btn-update-result {
+    button {
+      margin: 0 5px;
     }
   }
 }

@@ -20,7 +20,7 @@ import { ToastrService } from 'ngx-toastr';
 import { GameService } from '../../core/services/game.service';
 import { CommonModule, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { cilInfo } from '@coreui/icons';
+import { cilList, cilPencil } from '@coreui/icons';
 import { IconDirective } from '@coreui/icons-angular';
 @Component({
   templateUrl: 'dashboard.component.html',
@@ -48,7 +48,7 @@ import { IconDirective } from '@coreui/icons-angular';
 ]
 })
 export class DashboardComponent implements OnInit {
-  icons = { cilInfo };
+  icons = { cilList, cilPencil };
   title: string = "";
   listGames: any[] = [];
   listMatch: any[] = [];
@@ -63,6 +63,7 @@ export class DashboardComponent implements OnInit {
   isStopSession = false;
   isModalVisibleNewSession = false;
   isModalVisibleListMatch = false;
+  isUpdateResult = false;
   constructor(
     private _gameService: GameService,
     private _toastr: ToastrService
@@ -202,11 +203,44 @@ export class DashboardComponent implements OnInit {
     })
   }
   selecteMatch: any;
+  updateMatch: any;
+  reopenMatch: any;
+  isModalReopenMatch = false;
   onShowModalListMatch(): void {
     this.isModalVisibleListMatch = true;
     this.selecteMatch = undefined;
   }
   onSelectMatch(match: any): void {
     this.selecteMatch = match;
+  }
+  onReopenMatch(match: any): void {
+    this.reopenMatch = match;
+    this.isModalReopenMatch = true;
+  }
+  onConfirmReopen(): void {
+    const redObj = {
+      roomId: this.selectedRoomId,
+      matchId: this.reopenMatch.matchId
+    }
+    this._gameService.reopenSession(redObj).subscribe(res => {
+        this._toastr.success("Cập nhật thành công");
+        this.isModalReopenMatch = false;
+        this.isModalVisibleListMatch = false;
+        this.onGetListGame();
+        this.onGetlistMatch();
+      })
+  }
+  onChangeResult(): void {
+    this._gameService.gameResult({
+      ...this.resultObj,
+      roomId: this.updateMatch.roomId,
+      matchId: this.updateMatch.matchId
+    }).subscribe(res => {
+      this.isModalVisibleListMatch = false;
+      this._toastr.success("Cập nhật kết quả thành công");
+      this.isUpdateResult = false;
+      this.onGetListGame();
+      this.onGetlistMatch();
+    })
   }
 }
