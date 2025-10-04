@@ -92,7 +92,9 @@
     <select class="input-el w-100 mb-3" [(ngModel)]="selectedMatchId">
       <option value="0" disabled>Chọn trận đấu</option>
       @for (match of listMatch; track match.matchId) {
-        <option value="{{match.matchId}}">{{match.matchName}}</option>
+        @if (match.status != 4) {
+          <option value="{{match.matchId}}">{{match.matchName}}</option>
+        }
       }
     </select>
     <p class="font-weigth-500">
