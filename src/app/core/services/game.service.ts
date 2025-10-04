@@ -27,6 +27,11 @@ export class GameService {
       tap((res) => {}),
     );
   }
+  updateSession(params: any): Observable<any> {
+    return this.dataService.post("/api/v1/chicken/matches/bet/edit", params).pipe(
+      tap((res) => {}),
+    );
+  }
   lockSession(params: sesionObject): Observable<any> {
     return this.dataService.post("/api/v1/chicken/matches/bet/locked", params).pipe(
       tap((res) => {}),

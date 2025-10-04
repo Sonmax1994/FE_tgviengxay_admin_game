@@ -38,7 +38,9 @@
     <select class="input-el w-100 mb-3" [(ngModel)]="selectedMatchId">
       <option value="0" disabled>Chọn trận đấu</option>
       @for (match of listMatch; track match.matchId) {
-        <option value="{{match.matchId}}">{{match.matchName}}</option>
+        @if (match.status != 4) {
+          <option value="{{match.matchId}}">{{match.matchName}}</option>
+        }
       }
     </select>
   </c-modal-body>
@@ -120,7 +122,7 @@
 </c-modal>
 <c-modal #newsession backdrop="static" id="newsession" [visible]="isModalVisibleNewSession">
   <c-modal-header>
-    <h5 cModalTitle class="w-100 text-center">PHIÊN CƯỢC MỚI</h5>
+    <h5 cModalTitle class="w-100 text-center">{{isEditMatch ? "THAY ĐỔI THÔNG TIN PHIÊN CƯỢC" : "PHIÊN CƯỢC MỚI"}}</h5>
   </c-modal-header>
   <c-modal-body>
     <div class="mb-3">
@@ -141,7 +143,7 @@
     </div>
   </c-modal-body>
   <c-modal-footer>
-    <button [cModalToggle]="newsession.id" cButton color="secondary">
+    <button cButton color="secondary" (click)="isModalVisibleNewSession = false;">
       HỦY
     </button>
     <button cButton color="primary" (click)="onCreateNewSession()">XÁC NHẬN</button>
@@ -167,12 +169,15 @@
             <td class="text-center">{{match.matchId}}</td>
             <td class="text-center">{{match.matchName}}</td>
             <td class="text-center">{{onRenderGameStt(match.status)}}</td>
-            <td class="text-center">
+            <td class="text-left">
               <span class="detail-txt" (click)="onSelectMatch(match)" title="Chi Tiết">
                 <svg [cIcon]="icons.cilList" size="xl" ></svg>
               </span>
               <span *ngIf="match.status == 3" class="detail-txt" title="Mở Lại Cược"(click)="onReopenMatch(match)">
                 <svg [cIcon]="icons.cilPencil" size="xl"></svg>
+              </span>
+              <span *ngIf="match.status != 4" class="detail-txt" title="Thay Đổi Thông Tin"(click)="onEditMatch(match)">
+                <svg [cIcon]="icons.cilSettings" size="xl"></svg>
               </span>
             </td>
           </tr>
@@ -194,7 +199,8 @@
       </p>
       <P>
         KẾT QUẢ: {{selecteMatch.result.winnerName}}
-        <button cButton color="warning" style="margin-left: 20px;" 
+        <button cButton color="warning" style="margin-left: 20px;"
+        *ngIf="selecteMatch.status == 4"
         (click)="
           isUpdateResult = true; 
           updateMatch = selecteMatch; 

@@ -20,7 +20,7 @@ import { ToastrService } from 'ngx-toastr';
 import { GameService } from '../../core/services/game.service';
 import { CommonModule, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { cilList, cilPencil } from '@coreui/icons';
+import { cilList, cilPencil, cilSettings } from '@coreui/icons';
 import { IconDirective } from '@coreui/icons-angular';
 @Component({
   templateUrl: 'dashboard.component.html',
@@ -48,7 +48,7 @@ import { IconDirective } from '@coreui/icons-angular';
 ]
 })
 export class DashboardComponent implements OnInit {
-  icons = { cilList, cilPencil };
+  icons = { cilList, cilPencil, cilSettings };
   title: string = "";
   listGames: any[] = [];
   listMatch: any[] = [];
@@ -179,6 +179,7 @@ export class DashboardComponent implements OnInit {
   }
   onShowModalNewSession(gameType: number): void {
     this.isModalVisibleNewSession = true;
+    this.isEditMatch = false;
     this.selectedRoomId = gameType == 1 ? 1 : 2;
     this.newSession = {
       chickenBlue: "",
@@ -192,15 +193,26 @@ export class DashboardComponent implements OnInit {
       this._toastr.error("Vui lòng nhập đầy đủ thông tin");
       return;
     }
-    this._gameService.createSession({
-      roomId: this.selectedRoomId,
-      ...this.newSession
-    }).subscribe(res => {
-      this._toastr.success("Tạo phiên cược thành công");
-      this.isModalVisibleNewSession = false;
-      this.onGetListGame();
-      this.onGetlistMatch();
-    })
+    if (this.isEditMatch) {
+      this._gameService.updateSession({
+        ...this.newSession
+      }).subscribe(res => {
+        this._toastr.success("Thay đổi thông tin phiên cược thành công");
+        this.isModalVisibleNewSession = false;
+        this.onGetListGame();
+        this.onGetlistMatch();
+      })
+    } else {
+      this._gameService.createSession({
+        roomId: this.selectedRoomId,
+        ...this.newSession
+      }).subscribe(res => {
+        this._toastr.success("Tạo phiên cược thành công");
+        this.isModalVisibleNewSession = false;
+        this.onGetListGame();
+        this.onGetlistMatch();
+      })
+    }
   }
   selecteMatch: any;
   updateMatch: any;
@@ -216,6 +228,13 @@ export class DashboardComponent implements OnInit {
   onReopenMatch(match: any): void {
     this.reopenMatch = match;
     this.isModalReopenMatch = true;
+  }
+  isEditMatch = false;
+   onEditMatch(match: any): void {
+    this.isEditMatch = true;
+    this.newSession = {...match};
+    this.isModalVisibleNewSession = true;
+    this.isModalVisibleListMatch = false;
   }
   onConfirmReopen(): void {
     const redObj = {
