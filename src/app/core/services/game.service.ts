@@ -13,7 +13,7 @@ export class GameService {
   constructor(private dataService: DataService) {}
 
   listGame(): Observable<any> {
-    return this.dataService.get("/api/v1/game/rooms", {}).pipe(
+    return this.dataService.get("/api/v1/admin/game/rooms", {}).pipe(
       tap((res) => {}),
     );
   }
