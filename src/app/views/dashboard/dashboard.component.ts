@@ -143,10 +143,6 @@ export class DashboardComponent implements OnInit {
       })
     }
   }
-  onShowModalCurrentSession(gameType: number): void {
-    console.log(gameType);
-    
-  }
   onShowModalResult(gameType: number): void {
     this.isModalVisibleResult = true;
     this.selectedRoomId = gameType == 1 ? 1 : 2;
@@ -261,5 +257,68 @@ export class DashboardComponent implements OnInit {
       this.onGetListGame();
       this.onGetlistMatch();
     })
+  }
+  onShowModalCurrentSessionXD() {
+    this.onGetCurrentActiveMatchXD();
+  }
+  currentActiveMatchXD: any = {
+    id: null,
+    statusMatch: "",
+    urlLiveStream: ""
+  };
+  isModalVisibleCurrentSessionXD = false;
+  onGetCurrentActiveMatchXD(): void {
+    this._gameService.currentXD().subscribe(res => {
+      if(!res.data.id) {
+        this._toastr.error("Không có trận đấu nào đang diễn ra. Vui lòng tạo mới trận đấu.");
+      } else {
+        this.currentActiveMatchXD = res.data;
+        this.isModalVisibleCurrentSessionXD = true;
+      }
+    })
+  }
+  isCreateXD = false;
+  newSessionXD = {
+    urlLiveStream: "",
+  };
+  onCreateXD() {
+    this.isCreateXD = true;
+    this.newSessionXD = {
+      urlLiveStream: "",
+    };
+  }
+  onCreateNewSessionXD() {
+    if (!this.newSessionXD.urlLiveStream) {
+      this._toastr.error("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    this._gameService.createSessionXD({
+      urlLiveStream: this.newSessionXD.urlLiveStream,
+    }).subscribe(res => {
+      this._toastr.success("Tạo trận thành công");
+      this.isCreateXD = false;
+    })
+  }
+  onUpdateXD() {
+    if (!this.currentActiveMatchXD.urlLiveStream) {
+      this._toastr.error("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    this._gameService.updateXD({
+      urlLiveStream: this.currentActiveMatchXD.urlLiveStream,
+    }).subscribe(res => {
+      this._toastr.success("Cập nhật thành công");
+      this.isModalVisibleCurrentSessionXD = false;
+    })
+  }
+  isFinishXD = false;
+  onFinishXD() {
+    this.isFinishXD = true;
+  }
+  onConfirmFinishXD() {
+    this._gameService.finishXD().subscribe(res => {
+        this._toastr.success("Đã đóng trận đấu. Hãy tạo trận mới để tiếp tục các phiên cược.");
+        this.isFinishXD = false;
+      })
   }
 }
