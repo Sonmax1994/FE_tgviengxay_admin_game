@@ -1,7 +1,7 @@
 [
   {
     "context": ["/api/**"],
-    "target": "https://api.tgviengxay.bet/",
+    "target": "tgvx-alb-1149946344.ap-southeast-1.elb.amazonaws.com/",
     "secure": false,
     "changeOrigin": true,
     "logLevel" : "debug"
