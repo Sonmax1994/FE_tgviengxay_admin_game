@@ -87,4 +87,9 @@ export class GameService {
       tap((res) => {}),
     );
   }
+  gameResultXD(params: any): Observable<any> {
+     return this.dataService.post("/api/v1/admin/xocdia/match/session/setup/result", params).pipe(
+      tap((res) => {}),
+    );
+  }
 }

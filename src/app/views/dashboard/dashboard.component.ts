@@ -22,6 +22,7 @@ import { CommonModule, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { cilList, cilPencil, cilSettings } from '@coreui/icons';
 import { IconDirective } from '@coreui/icons-angular';
+import { result } from 'lodash-es';
 @Component({
   templateUrl: 'dashboard.component.html',
   styleUrls: ['dashboard.component.scss'],
@@ -163,21 +164,35 @@ export class DashboardComponent implements OnInit {
       winner: null
     };
   }
+  objXD = {
+    result: null,
+    roomId: 2
+  }
   onSetResult(): void {
-    if (!this.selectedMatchId || this.resultObj.winner === null) {
-      this._toastr.error("Vui lòng chọn trận đấu và kết quả");
-      return;
+    if (this.selectedRoomId == 1) {
+      if (!this.selectedMatchId || this.resultObj.winner === null) {
+        this._toastr.error("Vui lòng chọn trận đấu và kết quả");
+        return;
+      }
+      this._gameService.gameResult({
+        ...this.resultObj,
+        roomId: this.selectedRoomId,
+        matchId: this.selectedMatchId
+      }).subscribe(res => {
+        this._toastr.success("Cập nhật kết quả thành công");
+        this.isModalVisibleResult = false;
+        this.onGetListGame();
+        this.onGetlistMatch();
+      })
+    } else {
+      console.log(this.objXD);
+      this._gameService.gameResultXD({
+        ...this.objXD
+      }).subscribe(res => {
+        this._toastr.success("Cập nhật kết quả thành công");
+        this.isModalVisibleResult = false;
+      })
     }
-    this._gameService.gameResult({
-      ...this.resultObj,
-      roomId: this.selectedRoomId,
-      matchId: this.selectedMatchId
-    }).subscribe(res => {
-      this._toastr.success("Cập nhật kết quả thành công");
-      this.isModalVisibleResult = false;
-      this.onGetListGame();
-      this.onGetlistMatch();
-    })
   }
   newSession = {
     chickenBlue: "",
