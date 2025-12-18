@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IApiService } from '../interfaces/api';
 import { IHttpClientOptions } from '../interfaces/http-client-options';
-const END_POINT_URL = (window as any).END_POINT_URL || 'https://api.tgviengxay.bet';
+declare let END_POINT_URL: any;
 @Injectable({
   providedIn: 'root'
 })
