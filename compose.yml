@@ -1,0 +1,9 @@
+name: dev-tgviengxay-bet
+services:
+  web-admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "79:80"
+      

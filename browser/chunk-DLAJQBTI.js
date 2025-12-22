@@ -1,0 +1,1 @@
+import{X as r,g as o}from"./chunk-ZOBK74XU.js";var t=class t{constructor(){this.isLoading=new o(!1)}};t.\u0275fac=function(i){return new(i||t)},t.\u0275prov=r({token:t,factory:t.\u0275fac,providedIn:"root"});var c=t;export{c as a};
