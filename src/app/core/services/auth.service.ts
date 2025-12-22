@@ -35,7 +35,13 @@ export class AuthService {
     return this.dataService.post("/api/v1/admin/game/login", params).pipe(
       tap((res: any) => {
         if(res?.data?.accessToken) {
-          this._setLoginLocalStogare(res.data.accessToken);
+          if(res.data.role === 1) {
+            this._toastr.error('Bạn không quyền truy cập vào hệ thống này');
+            this.logout();
+          } else {
+            localStorage.setItem('role', res.data.role);
+            this._setLoginLocalStogare(res.data.accessToken);
+          }
         } else {
           this._toastr.error('Lỗi đăng nhập. Vui lòng thử lại');
         }

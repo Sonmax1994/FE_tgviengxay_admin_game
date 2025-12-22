@@ -22,7 +22,6 @@ import { CommonModule, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { cilList, cilPencil, cilSettings } from '@coreui/icons';
 import { IconDirective } from '@coreui/icons-angular';
-import { result } from 'lodash-es';
 @Component({
   templateUrl: 'dashboard.component.html',
   styleUrls: ['dashboard.component.scss'],
@@ -65,6 +64,7 @@ export class DashboardComponent implements OnInit {
   isModalVisibleNewSession = false;
   isModalVisibleListMatch = false;
   isUpdateResult = false;
+  role: any;
   constructor(
     private _gameService: GameService,
     private _toastr: ToastrService
@@ -72,6 +72,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.onGetListGame();
     this.onGetlistMatch();
+    this.role = localStorage.getItem('role');
   }
   onGetListGame(): void {
     this._gameService.listGame().subscribe(res => {
@@ -368,5 +369,14 @@ export class DashboardComponent implements OnInit {
         this.isFinishXD = false;
       })
     }
+  }
+  onCheckShowGame(gameId: number): boolean {
+    if(gameId === 1 && this.role === '2') {
+      return true;
+    }
+    if(gameId === 2 && this.role === '4') {
+      return true;
+    }
+    return false;
   }
 }
