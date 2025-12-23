@@ -1,7 +1,7 @@
 [
   {
     "context": ["/api/**"],
-    "target": "https://api.tgviengxay.bet/",
+    "target": "https://admin-dev.tgviengxay.bet/",
     "secure": false,
     "changeOrigin": true,
     "logLevel" : "debug"

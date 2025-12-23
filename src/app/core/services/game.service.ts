@@ -52,5 +52,44 @@ export class GameService {
       tap((res) => {}),
     );
   }
+  currentXD(): Observable<any> {
+    return this.dataService.get("/api/v1/admin/xocdia/match/status", {}).pipe(
+      tap((res) => {}),
+    );
+  }
+  createMatchXD(params: any): Observable<any> {
+    return this.dataService.post("/api/v1/admin/xocdia/match/create", params).pipe(
+      tap((res) => {}),
+    );
+  }
+  updateXD(params: any): Observable<any> {
+    return this.dataService.post("/api/v1/admin/xocdia/match/edit", params).pipe(
+      tap((res) => {}),
+    );
+  }
+  finishXD(): Observable<any> {
+    return this.dataService.post("/api/v1/admin/xocdia/match/completed", {}).pipe(
+      tap((res) => {}),
+    );
+  }
+  finishSessionXD(): Observable<any> {
+    return this.dataService.post("/api/v1/admin/xocdia/session/completed", {}).pipe(
+      tap((res) => {}),
+    );
+  }
+  createSessionXD(): Observable<any> {
+    return this.dataService.post("/api/v1/admin/xocdia/session/start", {}).pipe(
+      tap((res) => {}),
+    );
+  }
+  lockSessionXD(): Observable<any> {
+    return this.dataService.post("/api/v1/admin/xocdia/session/locked", {}).pipe(
+      tap((res) => {}),
+    );
+  }
+  gameResultXD(params: any): Observable<any> {
+     return this.dataService.post("/api/v1/admin/xocdia/session/setup/result", params).pipe(
+      tap((res) => {}),
+    );
+  }
 }
-

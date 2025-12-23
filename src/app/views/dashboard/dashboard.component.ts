@@ -64,6 +64,7 @@ export class DashboardComponent implements OnInit {
   isModalVisibleNewSession = false;
   isModalVisibleListMatch = false;
   isUpdateResult = false;
+  role: any;
   constructor(
     private _gameService: GameService,
     private _toastr: ToastrService
@@ -71,6 +72,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.onGetListGame();
     this.onGetlistMatch();
+    this.role = localStorage.getItem('role');
   }
   onGetListGame(): void {
     this._gameService.listGame().subscribe(res => {
@@ -108,44 +110,52 @@ export class DashboardComponent implements OnInit {
   }
   onShowModalConfirm(index: number, gameType: number): void {    
     this.isModalVisibleFinishOrStop = true;
-    this.selectedRoomId = gameType == 1 ? 1 : 2;
-    this.selectedMatchId = 0;
-    if (index === 1) {
-      this.isStopSession = false;
-      this.title = "NGƯỜI CHƠI SẼ KHÔNG THỂ ĐẶT CƯỢC CHO GAME NÀY";
+    if(gameType == 1) {
+      this.selectedRoomId = 1;
+      this.selectedMatchId = 0;
+      if (index === 1) {
+        this.isStopSession = false;
+        this.title = "NGƯỜI CHƠI SẼ KHÔNG THỂ ĐẶT CƯỢC CHO GAME NÀY";
+      } else {
+        this.title = "PHIÊN CƯỢC HIỆN TẠI SẼ BỊ ĐÓNG";
+        this.isStopSession = true;
+      }
     } else {
-      this.title = "PHIÊN CƯỢC HIỆN TẠI SẼ BỊ ĐÓNG";
-      this.isStopSession = true;
+      this.selectedRoomId = 2;
+      this.title = "NGƯỜI CHƠI SẼ KHÔNG THỂ ĐẶT CƯỢC CHO GAME NÀY";
     }
   }
   onConfirmFinishOrStop(): void {
-    if (!this.selectedMatchId) {
-      this._toastr.error("Vui lòng chọn trận đấu");
-      return;
-    }
-    const redObj = {
-      roomId: this.selectedRoomId,
-      matchId: this.selectedMatchId
-    }
-    if (this.isStopSession) {
-      this._gameService.finishSession(redObj).subscribe(res => {
-        this._toastr.success("Đã đóng phiên cược");
-        this.isModalVisibleFinishOrStop = false;
-        this.onGetListGame();
-        this.onGetlistMatch();
-      })
+    if(this.selectedRoomId == 1) {
+      if (!this.selectedMatchId) {
+        this._toastr.error("Vui lòng chọn trận đấu");
+        return;
+      }
+      const redObj = {
+        roomId: this.selectedRoomId,
+        matchId: this.selectedMatchId
+      }
+      if (this.isStopSession) {
+        this._gameService.finishSession(redObj).subscribe(res => {
+          this._toastr.success("Đã đóng phiên cược");
+          this.isModalVisibleFinishOrStop = false;
+          this.onGetListGame();
+          this.onGetlistMatch();
+        })
+      } else {
+        this._gameService.lockSession(redObj).subscribe(res => {
+          this._toastr.success("Đã ngưng nhận cược");
+          this.isModalVisibleFinishOrStop = false;
+          this.onGetListGame();
+          this.onGetlistMatch();
+        })
+      }
     } else {
-      this._gameService.lockSession(redObj).subscribe(res => {
+      this._gameService.lockSessionXD().subscribe(res => {
         this._toastr.success("Đã ngưng nhận cược");
         this.isModalVisibleFinishOrStop = false;
-        this.onGetListGame();
-        this.onGetlistMatch();
       })
     }
-  }
-  onShowModalCurrentSession(gameType: number): void {
-    console.log(gameType);
-    
   }
   onShowModalResult(gameType: number): void {
     this.isModalVisibleResult = true;
@@ -155,21 +165,35 @@ export class DashboardComponent implements OnInit {
       winner: null
     };
   }
+  objXD = {
+    result: null,
+    roomId: 2
+  }
   onSetResult(): void {
-    if (!this.selectedMatchId || this.resultObj.winner === null) {
-      this._toastr.error("Vui lòng chọn trận đấu và kết quả");
-      return;
+    if (this.selectedRoomId == 1) {
+      if (!this.selectedMatchId || this.resultObj.winner === null) {
+        this._toastr.error("Vui lòng chọn trận đấu và kết quả");
+        return;
+      }
+      this._gameService.gameResult({
+        ...this.resultObj,
+        roomId: this.selectedRoomId,
+        matchId: this.selectedMatchId
+      }).subscribe(res => {
+        this._toastr.success("Cập nhật kết quả thành công");
+        this.isModalVisibleResult = false;
+        this.onGetListGame();
+        this.onGetlistMatch();
+      })
+    } else {
+      console.log(this.objXD);
+      this._gameService.gameResultXD({
+        ...this.objXD
+      }).subscribe(res => {
+        this._toastr.success("Cập nhật kết quả thành công");
+        this.isModalVisibleResult = false;
+      })
     }
-    this._gameService.gameResult({
-      ...this.resultObj,
-      roomId: this.selectedRoomId,
-      matchId: this.selectedMatchId
-    }).subscribe(res => {
-      this._toastr.success("Cập nhật kết quả thành công");
-      this.isModalVisibleResult = false;
-      this.onGetListGame();
-      this.onGetlistMatch();
-    })
   }
   newSession = {
     chickenBlue: "",
@@ -261,5 +285,98 @@ export class DashboardComponent implements OnInit {
       this.onGetListGame();
       this.onGetlistMatch();
     })
+  }
+  onShowModalCurrentSessionXD() {
+    this.onGetCurrentActiveMatchXD();
+  }
+  currentActiveMatchXD: any = {
+    id: null,
+    statusMatch: "",
+    urlLiveStream: ""
+  };
+  isModalVisibleCurrentSessionXD = false;
+  onGetCurrentActiveMatchXD(): void {
+    this._gameService.currentXD().subscribe(res => {
+      if(!res.data.id) {
+        this._toastr.error("Không có trận đấu nào đang diễn ra. Vui lòng tạo mới trận đấu.");
+        this.onCreateXD(1);
+      } else {
+        this.currentActiveMatchXD = res.data;
+        this.isModalVisibleCurrentSessionXD = true;
+      }
+    })
+  }
+  isCreateXD = false;
+  newSessionXD = {
+    urlLiveStream: "",
+  };
+  typeXD = 1;
+  onCreateXD(type: number) {
+    this.isCreateXD = true;
+    this.typeXD = type;
+    if(type === 1) {
+      this.newSessionXD = {
+        urlLiveStream: "",
+      };
+    }
+  }
+  onCreateNewSessionXD() {
+    if(this.typeXD === 1) {
+      if (!this.newSessionXD.urlLiveStream) {
+        this._toastr.error("Vui lòng nhập đầy đủ thông tin");
+        return;
+      }
+      this._gameService.createMatchXD({
+        urlLiveStream: this.newSessionXD.urlLiveStream,
+      }).subscribe(res => {
+        this._toastr.success("Tạo trận thành công");
+        this.isCreateXD = false;
+      })
+    } else {
+      this._gameService.createSessionXD().subscribe(res => {
+        this._toastr.success("Tạo ván thành công");
+        this.isCreateXD = false;
+      })
+    }
+  }
+  onUpdateXD() {
+    if (!this.currentActiveMatchXD.urlLiveStream) {
+      this._toastr.error("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    this._gameService.updateXD({
+      urlLiveStream: this.currentActiveMatchXD.urlLiveStream,
+    }).subscribe(res => {
+      this._toastr.success("Cập nhật thành công");
+      this.isModalVisibleCurrentSessionXD = false;
+    })
+  }
+  isFinishXD = false;
+  onFinishXD(type: number) {
+    this.isFinishXD = true;
+    this.typeXD = type;
+  }
+  onConfirmFinishXD() {
+    if (this.typeXD === 1) {
+       this._gameService.finishXD().subscribe(res => {
+        this._toastr.success("Đã đóng trận đấu. Hãy tạo trận mới để tiếp tục các phiên cược.");
+        this.isFinishXD = false;
+        this.isModalVisibleCurrentSessionXD = false;
+      })
+    } else {
+      this._gameService.finishSessionXD().subscribe(res => {
+        this._toastr.success("Đã đóng ván đấu. Hãy tạo ván mới để tiếp tục các phiên cược.");
+        this.isFinishXD = false;
+      })
+    }
+  }
+  onCheckShowGame(gameId: number): boolean {
+    if(gameId === 1 && this.role === '2') {
+      return true;
+    }
+    if(gameId === 2 && this.role === '4') {
+      return true;
+    }
+    return false;
   }
 }

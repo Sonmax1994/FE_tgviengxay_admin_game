@@ -4,27 +4,29 @@
 </c-breadcrumb>
 <c-row>
   @for (game of listGames; track game.id) {
-    <c-col sm="6">
+    <c-col [sm]="role == 1 ? '6' : '12'" *ngIf="onCheckShowGame(game.id)">
       <c-card>
         <c-card-header>
           <h4 class="card-title mb-0 text-center">{{game.name | uppercase }}</h4>
         </c-card-header>
         <c-card-body>
           <div class="d-flex align-item-center my-2 mb-4">
-            <div class={{onRenderStatusClass(game.status)}}></div>
-            <div class="status-text">{{onRenderGameStt(game.status) | uppercase}}</div>
+            <div *ngIf="game.type == 1" class={{onRenderStatusClass(game.status)}}></div>
+            <div class="status-text" [ngClass]="{'opacity-0': game.type == 2}">{{onRenderGameStt(game.status) | uppercase}}</div>
           </div>
           <div class="d-flex align-item-center btn-actions">
             <button *ngIf="game.type == 1" class="gray" [cModalToggle]="listMatchModal.id" (click)="onShowModalListMatch()">QUẢN LÍ TRẬN ĐẤU</button>
-            <button *ngIf="game.type == 2" disabled class="gray" [cModalToggle]="currentSession.id" (click)="onShowModalCurrentSession(game.type)">PHIÊN HIỆN TẠI</button>
-            <button [disabled]="game.type == 2" class="brown" [cModalToggle]="result.id" (click)="onShowModalResult(game.type)">TRẢ KẾT QUẢ</button>
+            <button *ngIf="game.type == 2" class="gray" (click)="onShowModalCurrentSessionXD()">TRẬN ĐẤU HIỆN TẠI</button>
+            <button class="brown" [cModalToggle]="result.id" (click)="onShowModalResult(game.type)">TRẢ KẾT QUẢ</button>
           </div>
           <div class="d-flex align-item-center btn-actions">
-            <button [disabled]="game.type == 2" class="blue" [cModalToggle]="modal.id" (click)="onShowModalConfirm(1, game.type)">NGƯNG NHẬN CƯỢC</button>
-            <button [disabled]="game.type == 2" class="red" [cModalToggle]="modal.id" (click)="onShowModalConfirm(2, game.type)">KẾT THÚC PHIÊN</button>
+            <button class="blue" [cModalToggle]="modal.id" (click)="onShowModalConfirm(1, game.type)">NGƯNG NHẬN CƯỢC</button>
+            <button *ngIf="game.type == 1" class="red" [cModalToggle]="modal.id" (click)="onShowModalConfirm(2, game.type)">KẾT THÚC PHIÊN</button>
+            <button *ngIf="game.type == 2" class="red" (click)="onFinishXD(2)">KẾT THÚC VÁN ĐẤU</button>
           </div>
           <div class="d-flex align-item-center btn-actions">
-            <button [disabled]="game.type == 2" class="green" [cModalToggle]="newsession.id" (click)="onShowModalNewSession(game.type)">MỞ CƯỢC</button>
+            <button *ngIf="game.type == 1" class="green" [cModalToggle]="newsession.id" (click)="onShowModalNewSession(game.type)">MỞ CƯỢC</button>
+            <button *ngIf="game.type == 2" class="green" (click)="onCreateXD(2)">TẠO VÁN MỚI</button>
           </div>
         </c-card-body>
       </c-card>
@@ -34,15 +36,17 @@
 <c-modal #modal backdrop="static" id="modal" [visible]="isModalVisibleFinishOrStop">
   <c-modal-body>
     <h5 cModalTitle class="w-100 text-center mb-4">{{title}}</h5>
-    <p class="label-txt font-weigth-500">TRẬN ĐẤU:</p>
-    <select class="input-el w-100 mb-3" [(ngModel)]="selectedMatchId">
-      <option value="0" disabled>Chọn trận đấu</option>
-      @for (match of listMatch; track match.matchId) {
-        @if (match.status != 4) {
-          <option value="{{match.matchId}}">{{match.matchName}}</option>
+    <ng-container *ngIf="selectedRoomId === 1">
+      <p class="label-txt font-weigth-500">TRẬN ĐẤU:</p>
+      <select class="input-el w-100 mb-3" [(ngModel)]="selectedMatchId">
+        <option value="0" disabled>Chọn trận đấu</option>
+        @for (match of listMatch; track match.matchId) {
+          @if (match.status != 4) {
+            <option value="{{match.matchId}}">{{match.matchName}}</option>
+          }
         }
-      }
-    </select>
+      </select>
+    </ng-container>
   </c-modal-body>
   <c-modal-footer>
     <button [cModalToggle]="modal.id" cButton color="secondary">
@@ -51,36 +55,25 @@
     <button cButton color="primary" (click)="onConfirmFinishOrStop()">XÁC NHẬN</button>
   </c-modal-footer>
 </c-modal>
-<c-modal #currentSession backdrop="static" id="currentSession">
+<c-modal backdrop="static" id="currentSession" [visible]="isModalVisibleCurrentSessionXD">
   <c-modal-header>
     <h5 cModalTitle class="w-100 text-center">THÔNG TIN CHI TIẾT</h5>
   </c-modal-header>
   <c-modal-body>
-    <table bordered cTable>
-      <thead>
-        <tr>
-          <th scope="col" class="text-center">GÀ XANH</th>
-          <th scope="col" class="text-center">GÀ ĐỎ</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="text-center">GÀ XANH NGHỆ AN</td>
-          <td class="text-center">GÀ ĐỎ NAM ĐỊNH</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      THỜI GIAN BẮT ĐẦU: 12:00 20/10/2024
+    <p class="d-flex align-items-center">
+      Trạng Thái: {{currentActiveMatchXD.statusMatch}}
+      <button cButton color="danger" style="color: #fff; margin-left: 10px;" (click)="onFinishXD(1)">KẾT THÚC TRẬN ĐẤU</button>
     </p>
-    <p>
-      THỜI GIAN KẾT THÚC: 12:00 20/10/2024
-    </p>
+    <div>
+      Link Live Stream:
+      <input name="link" type="text" placeholder="Link live stream" class="input-el" [(ngModel)]="currentActiveMatchXD.urlLiveStream">
+    </div>
   </c-modal-body>
   <c-modal-footer>
-    <button [cModalToggle]="currentSession.id" cButton color="secondary">
+    <button cButton color="secondary" (click)="isModalVisibleCurrentSessionXD = false;">
       ĐÓNG
     </button>
+    <button cButton color="primary" (click)="onUpdateXD()">CẬP NHẬT</button>
   </c-modal-footer>
 </c-modal>
 <c-modal #result backdrop="static" id="result" [visible]="isModalVisibleResult">
@@ -88,32 +81,61 @@
     <h5 cModalTitle class="w-100 text-center">KẾT QUẢ</h5>
   </c-modal-header>
   <c-modal-body>
-    <p class="label-txt font-weigth-500">TRẬN ĐẤU:</p>
-    <select class="input-el w-100 mb-3" [(ngModel)]="selectedMatchId">
-      <option value="0" disabled>Chọn trận đấu</option>
-      @for (match of listMatch; track match.matchId) {
-        @if (match.status != 4) {
-          <option value="{{match.matchId}}">{{match.matchName}}</option>
+    <ng-container *ngIf="selectedRoomId === 1; else elseTemplate">
+      <p class="label-txt font-weigth-500">TRẬN ĐẤU:</p>
+      <select class="input-el w-100 mb-3" [(ngModel)]="selectedMatchId">
+        <option value="0" disabled>Chọn trận đấu</option>
+        @for (match of listMatch; track match.matchId) {
+          @if (match.status != 4) {
+            <option value="{{match.matchId}}">{{match.matchName}}</option>
+          }
         }
-      }
-    </select>
-    <p class="font-weigth-500">
-      CHỌN GÀ CHIẾN THẮNG:
-    </p>
-    <div class="d-flex justify-content-evenly">
-      <c-form-check>
-        <input cFormCheckInput type="radio" value="draw" name="chickenOpt" id="chickenhoa" [(ngModel)]="resultObj.winner" />
-        <label cFormCheckLabel for="chickenhoa">HÒA</label>
-      </c-form-check>
-      <c-form-check>
-        <input cFormCheckInput type="radio" value="blue" name="chickenOpt" id="chickengreen" [(ngModel)]="resultObj.winner" />
-        <label cFormCheckLabel for="chickengreen">GÀ XANH</label>
-      </c-form-check>
-      <c-form-check>
-        <input cFormCheckInput type="radio" value="red" name="chickenOpt" id="chickenred" [(ngModel)]="resultObj.winner" />
-        <label cFormCheckLabel for="chickenred">GÀ ĐỎ</label>
-      </c-form-check>
-    </div>
+      </select>
+      <p class="font-weigth-500">
+        CHỌN GÀ CHIẾN THẮNG:
+      </p>
+      <div class="d-flex justify-content-evenly">
+        <c-form-check>
+          <input cFormCheckInput type="radio" value="draw" name="chickenOpt" id="chickenhoa" [(ngModel)]="resultObj.winner" />
+          <label cFormCheckLabel for="chickenhoa">HÒA</label>
+        </c-form-check>
+        <c-form-check>
+          <input cFormCheckInput type="radio" value="blue" name="chickenOpt" id="chickengreen" [(ngModel)]="resultObj.winner" />
+          <label cFormCheckLabel for="chickengreen">GÀ XANH</label>
+        </c-form-check>
+        <c-form-check>
+          <input cFormCheckInput type="radio" value="red" name="chickenOpt" id="chickenred" [(ngModel)]="resultObj.winner" />
+          <label cFormCheckLabel for="chickenred">GÀ ĐỎ</label>
+        </c-form-check>
+      </div>
+    </ng-container>
+    <ng-template #elseTemplate>
+      <p class="font-weigth-500">
+        CHỌN KẾT QUẢ CỦA VÁN ĐẤU:
+      </p>
+      <div>
+        <c-form-check>
+          <input cFormCheckInput type="radio" value="5" name="xdOpt" id="0white" [(ngModel)]="objXD.result" />
+          <label cFormCheckLabel for="0white">0 Trắng + 4 Đỏ (Chẵn)</label>
+        </c-form-check>
+        <c-form-check>
+          <input cFormCheckInput type="radio" value="4" name="xdOpt" id="1white" [(ngModel)]="objXD.result" />
+          <label cFormCheckLabel for="1white">1 Trắng + 3 Đỏ (Lẻ)</label>
+        </c-form-check>
+        <c-form-check>
+          <input cFormCheckInput type="radio" value="3" name="xdOpt" id="2white" [(ngModel)]="objXD.result" />
+          <label cFormCheckLabel for="2white">2 Trắng + 2 Đỏ (Chẵn)</label>
+        </c-form-check>
+        <c-form-check>
+          <input cFormCheckInput type="radio" value="2" name="xdOpt" id="3white" [(ngModel)]="objXD.result" />
+          <label cFormCheckLabel for="3white">3 Trắng + 1 Đỏ (Lẻ)</label>
+        </c-form-check>
+        <c-form-check>
+          <input cFormCheckInput type="radio" value="1" name="xdOpt" id="4white" [(ngModel)]="objXD.result" />
+          <label cFormCheckLabel for="4white">4 Trắng + 0 Đỏ (Chẵn)</label>
+        </c-form-check>
+      </div>
+    </ng-template>
   </c-modal-body>
   <c-modal-footer>
     <button [cModalToggle]="result.id" cButton color="secondary">
@@ -270,5 +292,37 @@
       HỦY
     </button>
     <button cButton color="primary" (click)="onConfirmReopen()">XÁC NHẬN</button>
+  </c-modal-footer>
+</c-modal>
+<c-modal #newsessionxd backdrop="static" id="newsessionXD" [visible]="isCreateXD">
+  <c-modal-header>
+    <h5 cModalTitle class="w-100 text-center">
+      {{typeXD == 1 ? "TẠO TRẬN MỚI" : "BẠN CÓ CHẮC CHẮN MUỐN TẠO VÁN MỚI?"}}
+    </h5>
+  </c-modal-header>
+  <c-modal-body *ngIf="typeXD===1">
+    <div>
+      <div class="d-block mb-1 font-weigth-500">LINK LIVE STREAM:</div>
+      <input name="link" type="text" placeholder="Link live stream" class="input-el" [(ngModel)]="newSessionXD.urlLiveStream">
+    </div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="isCreateXD = false;">
+      HỦY
+    </button>
+    <button cButton color="primary" (click)="onCreateNewSessionXD()">XÁC NHẬN</button>
+  </c-modal-footer>
+</c-modal>
+<c-modal backdrop="static" id="modalXD" [visible]="isFinishXD">
+  <c-modal-body>
+    <h5 cModalTitle class="w-100 text-center mb-4">
+      {{typeXD == 1 ? 'BẠN CÓ CHẮC CHẮN MUỐN KẾT THÚC TRẬN ĐẤU NÀY?' : 'BẠN CÓ CHẮC CHẮN MUỐN KẾT THÚC VÁN ĐẤU NÀY?'}}
+    </h5>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="isFinishXD = false;">
+      HỦY
+    </button>
+    <button cButton color="primary" (click)="onConfirmFinishXD()">XÁC NHẬN</button>
   </c-modal-footer>
 </c-modal>
