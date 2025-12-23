@@ -4,7 +4,7 @@
 </c-breadcrumb>
 <c-row>
   @for (game of listGames; track game.id) {
-    <c-col [sm]="role == 1 ? '6' : '12'" *ngIf="onCheckShowGame(game.id)">
+    <c-col sm="6" *ngIf="onCheckShowGame(game.id)">
       <c-card>
         <c-card-header>
           <h4 class="card-title mb-0 text-center">{{game.name | uppercase }}</h4>
