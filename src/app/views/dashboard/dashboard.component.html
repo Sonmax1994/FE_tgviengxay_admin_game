@@ -4,7 +4,7 @@
 </c-breadcrumb>
 <c-row>
   @for (game of listGames; track game.id) {
-    <c-col sm="6" *ngIf="onCheckShowGame(game.id)">
+    <c-col [sm]="role == 1 ? '6' : '12'" *ngIf="onCheckShowGame(game.id)">
       <c-card>
         <c-card-header>
           <h4 class="card-title mb-0 text-center">{{game.name | uppercase }}</h4>
@@ -12,7 +12,9 @@
         <c-card-body>
           <div class="d-flex align-item-center my-2 mb-4">
             <div *ngIf="game.type == 1" class={{onRenderStatusClass(game.status)}}></div>
-            <div class="status-text" [ngClass]="{'opacity-0': game.type == 2}">{{onRenderGameStt(game.status) | uppercase}}</div>
+            <div class="status-text" *ngIf="game.type == 1">{{onRenderGameStt(game.status) | uppercase}}</div>
+            <div *ngIf="isActive" class={{onRenderStatusClass(2)}}></div>
+            <div *ngIf="isActive" class="status-text">{{onRenderGameStt(2) | uppercase}}</div>
           </div>
           <div class="d-flex align-item-center btn-actions">
             <button *ngIf="game.type == 1" class="gray" [cModalToggle]="listMatchModal.id" (click)="onShowModalListMatch()">QUẢN LÍ TRẬN ĐẤU</button>
@@ -26,7 +28,8 @@
           </div>
           <div class="d-flex align-item-center btn-actions">
             <button *ngIf="game.type == 1" class="green" [cModalToggle]="newsession.id" (click)="onShowModalNewSession(game.type)">MỞ CƯỢC</button>
-            <button *ngIf="game.type == 2" class="green" (click)="onCreateXD(2)">TẠO VÁN MỚI</button>
+            <button *ngIf="game.type == 2" class="orange" (click)="onInitCreateXD()">TẠO TRẬN MỚI</button>
+            <button *ngIf="game.type == 2" class="green" (click)="onCreateXD(2)">TẠO VÁN (PHIÊN) MỚI</button>
           </div>
         </c-card-body>
       </c-card>

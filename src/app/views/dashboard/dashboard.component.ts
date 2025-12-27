@@ -65,14 +65,20 @@ export class DashboardComponent implements OnInit {
   isModalVisibleListMatch = false;
   isUpdateResult = false;
   role: any;
+  isActive: boolean = false;
   constructor(
     private _gameService: GameService,
     private _toastr: ToastrService
   ) {}
   ngOnInit(): void {
     this.onGetListGame();
-    this.onGetlistMatch();
     this.role = localStorage.getItem('role');
+    if(this.role === '2') {
+      this.onGetlistMatch();
+    }
+    if(this.role === '4') {
+      this.onGetCurrentActiveMatchXD();
+    }
   }
   onGetListGame(): void {
     this._gameService.listGame().subscribe(res => {
@@ -287,7 +293,11 @@ export class DashboardComponent implements OnInit {
     })
   }
   onShowModalCurrentSessionXD() {
-    this.onGetCurrentActiveMatchXD();
+    if(!this.isActive) {
+      this._toastr.error("Hiện không có trận đấu nào đang diễn ra");
+      return;
+    }
+    this.isModalVisibleCurrentSessionXD = true;
   }
   currentActiveMatchXD: any = {
     id: null,
@@ -298,11 +308,10 @@ export class DashboardComponent implements OnInit {
   onGetCurrentActiveMatchXD(): void {
     this._gameService.currentXD().subscribe(res => {
       if(!res.data.id) {
-        this._toastr.error("Không có trận đấu nào đang diễn ra. Vui lòng tạo mới trận đấu.");
-        this.onCreateXD(1);
+        this.isActive = false;
       } else {
+        this.isActive = true;
         this.currentActiveMatchXD = res.data;
-        this.isModalVisibleCurrentSessionXD = true;
       }
     })
   }
@@ -320,6 +329,13 @@ export class DashboardComponent implements OnInit {
       };
     }
   }
+  onInitCreateXD() {
+    if(this.isActive) {
+      this._toastr.error("Hiện đang có trận đấu diễn ra. Vui lòng kết thúc trận đấu trước khi tạo trận mới");
+      return;
+    }
+    this.onCreateXD(1);
+  }
   onCreateNewSessionXD() {
     if(this.typeXD === 1) {
       if (!this.newSessionXD.urlLiveStream) {
@@ -331,6 +347,7 @@ export class DashboardComponent implements OnInit {
       }).subscribe(res => {
         this._toastr.success("Tạo trận thành công");
         this.isCreateXD = false;
+        this.onGetCurrentActiveMatchXD();
       })
     } else {
       this._gameService.createSessionXD().subscribe(res => {
@@ -362,6 +379,7 @@ export class DashboardComponent implements OnInit {
         this._toastr.success("Đã đóng trận đấu. Hãy tạo trận mới để tiếp tục các phiên cược.");
         this.isFinishXD = false;
         this.isModalVisibleCurrentSessionXD = false;
+        this.onGetCurrentActiveMatchXD();
       })
     } else {
       this._gameService.finishSessionXD().subscribe(res => {
