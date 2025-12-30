@@ -13,8 +13,8 @@
           <div class="d-flex align-item-center my-2 mb-4">
             <div *ngIf="game.type == 1" class={{onRenderStatusClass(game.status)}}></div>
             <div class="status-text" *ngIf="game.type == 1">{{onRenderGameStt(game.status) | uppercase}}</div>
-            <div *ngIf="isActive" class={{onRenderStatusClass(2)}}></div>
-            <div *ngIf="isActive" class="status-text">{{onRenderGameStt(2) | uppercase}}</div>
+            <div *ngIf="game.type == 2" class={{onRenderStatusClass(isActive ? 2 : 0)}}></div>
+            <div *ngIf="game.type == 2" class="status-text">{{(isActive ? onRenderGameStt(2) : 'Không có trận đấu nào đang diễn ra') | uppercase}}</div>
           </div>
           <div class="d-flex align-item-center btn-actions">
             <button *ngIf="game.type == 1" class="gray" [cModalToggle]="listMatchModal.id" (click)="onShowModalListMatch()">QUẢN LÍ TRẬN ĐẤU</button>
@@ -118,23 +118,23 @@
       </p>
       <div>
         <c-form-check>
-          <input cFormCheckInput type="radio" value="5" name="xdOpt" id="0white" [(ngModel)]="objXD.result" />
+          <input cFormCheckInput type="radio" value="0" name="xdOpt" id="0white" [(ngModel)]="objXD.result" />
           <label cFormCheckLabel for="0white">0 Trắng + 4 Đỏ (Chẵn)</label>
         </c-form-check>
         <c-form-check>
-          <input cFormCheckInput type="radio" value="4" name="xdOpt" id="1white" [(ngModel)]="objXD.result" />
+          <input cFormCheckInput type="radio" value="1" name="xdOpt" id="1white" [(ngModel)]="objXD.result" />
           <label cFormCheckLabel for="1white">1 Trắng + 3 Đỏ (Lẻ)</label>
         </c-form-check>
         <c-form-check>
-          <input cFormCheckInput type="radio" value="3" name="xdOpt" id="2white" [(ngModel)]="objXD.result" />
+          <input cFormCheckInput type="radio" value="2" name="xdOpt" id="2white" [(ngModel)]="objXD.result" />
           <label cFormCheckLabel for="2white">2 Trắng + 2 Đỏ (Chẵn)</label>
         </c-form-check>
         <c-form-check>
-          <input cFormCheckInput type="radio" value="2" name="xdOpt" id="3white" [(ngModel)]="objXD.result" />
+          <input cFormCheckInput type="radio" value="3" name="xdOpt" id="3white" [(ngModel)]="objXD.result" />
           <label cFormCheckLabel for="3white">3 Trắng + 1 Đỏ (Lẻ)</label>
         </c-form-check>
         <c-form-check>
-          <input cFormCheckInput type="radio" value="1" name="xdOpt" id="4white" [(ngModel)]="objXD.result" />
+          <input cFormCheckInput type="radio" value="4" name="xdOpt" id="4white" [(ngModel)]="objXD.result" />
           <label cFormCheckLabel for="4white">4 Trắng + 0 Đỏ (Chẵn)</label>
         </c-form-check>
       </div>
